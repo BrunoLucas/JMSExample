@@ -1,5 +1,6 @@
 package br.com.rukaso.jmsexample;
 
+import java.util.Enumeration;
 import java.util.Scanner;
 
 import javax.jms.Connection;
@@ -9,40 +10,52 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.QueueBrowser;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import javax.jms.Topic;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-public class TesteProdutorTopico {
+public class TesteComsumidorTopicoEstoqueSelector {
 
 	public static void main(String[] args) throws NamingException, JMSException {
-
+		
 		InitialContext context = new InitialContext();
-
+		
 		ConnectionFactory connectionFactory = (ConnectionFactory) context.lookup("ConnectionFactory");
 		Connection connection = connectionFactory.createConnection();
+		connection.setClientID("estoque2");
 		connection.start();
-
+		
 		Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-		Destination topico = (Destination) context.lookup("loja");
+		Topic topico = (Topic) context.lookup("loja");
+		
+		MessageConsumer consumer = session.createDurableSubscriber(topico, "assinatura-selector", "ebook is null OR ebook=false", false);
+		consumer.setMessageListener(new MessageListener() {
+			
+			@Override
+			public void onMessage(Message mensagem) {
 
-		MessageProducer producer = session.createProducer(topico);
-
-		for (int i = 0; i < 100; i++) {
-			Message mensagem = null;
-			if (i % 2 == 0) {
-				mensagem.setBooleanProperty("ebook", false);
-				mensagem = session.createTextMessage("<pedido><id> " + i + "</id></pedido>");
-			} else {
-				mensagem = session.createTextMessage("<pedido><id> " + i + "</id></pedido>");
+				TextMessage textMessage  = (TextMessage)mensagem;
+		        try {
+					System.out.println(textMessage.getText());
+				} catch (JMSException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}							
 			}
-			producer.send(mensagem);
-		}
-
+		});
+		
+		
+		
+		
+		new Scanner(System.in).nextLine();
+		
 		connection.close();
 		context.close();
-
+		
+		
 	}
 }
