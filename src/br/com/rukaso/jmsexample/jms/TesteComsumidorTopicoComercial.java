@@ -10,6 +10,7 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -37,7 +38,6 @@ public class TesteComsumidorTopicoComercial {
 			@Override
 			public void onMessage(Message mensagem) {
 				ObjectMessage objectMessage = (ObjectMessage) mensagem;
-//				TextMessage textMessage  = (TextMessage)mensagem;
 		        try {
 					System.out.println((Pedido)objectMessage.getObject());
 				} catch (JMSException e) {

@@ -15,6 +15,9 @@ import javax.jms.TextMessage;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import br.com.rukaso.jmsexample.modelo.Pedido;
+import br.com.rukaso.jmsexample.modelo.PedidoFactory;
+
 public class TestProducerQueue {
 
 	public static void main(String[] args) throws NamingException, JMSException {
@@ -29,9 +32,10 @@ public class TestProducerQueue {
 		Destination fila = (Destination) context.lookup("financeiro");
 
 		MessageProducer producer = session.createProducer(fila);
+		Pedido pedido = new PedidoFactory().geraPedidoComValores();
 		
 		for(int i = 0; i < 2000; i++){
-			Message mensagem = session.createTextMessage("<pedido><id> "+ i + "</id></pedido>");
+			Message mensagem = session.createObjectMessage(pedido);
 			producer.send(mensagem);
 		}
 		

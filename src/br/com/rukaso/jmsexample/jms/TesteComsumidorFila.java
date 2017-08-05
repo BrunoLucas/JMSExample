@@ -10,6 +10,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
+import javax.jms.ObjectMessage;
 import javax.jms.Queue;
 import javax.jms.QueueBrowser;
 import javax.jms.Session;
@@ -20,14 +21,15 @@ import javax.naming.NamingException;
 public class TesteComsumidorFila {
 
 	public static void main(String[] args) throws NamingException, JMSException {
-		
+	    System.setProperty("org.apache.activemq.SERIALIZABLE_PACKAGES","*");
+
 		InitialContext context = new InitialContext();
 		
 		ConnectionFactory connectionFactory = (ConnectionFactory) context.lookup("ConnectionFactory");
 		Connection connection = connectionFactory.createConnection("user", "senha");
 		connection.start();
 		
-		Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+		Session session = connection.createSession(true, Session.SESSION_TRANSACTED);
 		Destination fila = (Destination) context.lookup("financeiro");
 		
 		QueueBrowser queueBrowser = session.createBrowser((Queue) fila);
@@ -35,8 +37,8 @@ public class TesteComsumidorFila {
 		Enumeration enumeration = queueBrowser.getEnumeration();
 		
 		while(enumeration.hasMoreElements()){
-			TextMessage textMessage = (TextMessage) enumeration.nextElement();
-			System.out.println("Mensagem: " + textMessage.getText());
+			ObjectMessage objectMessage = (ObjectMessage) enumeration.nextElement();
+			System.out.println("Mensagem: " + objectMessage.getObject());
 		}
 		
 		MessageConsumer consumer = session.createConsumer(fila);
@@ -45,13 +47,15 @@ public class TesteComsumidorFila {
 			@Override
 			public void onMessage(Message mensagem) {
 
-				TextMessage textMessage  = (TextMessage)mensagem;
+				ObjectMessage objectMessage = (ObjectMessage) mensagem;
 		        try {
-					System.out.println(textMessage.getText());
+					System.out.println(objectMessage.getObject());
+//					objectMessage.acknowledge();
+					session.commit();
 				} catch (JMSException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}							
+				}		
 			}
 		});
 		
