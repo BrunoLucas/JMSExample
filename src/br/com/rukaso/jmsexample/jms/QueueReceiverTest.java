@@ -1,4 +1,4 @@
-package br.com.rukaso.jmsexample;
+package br.com.rukaso.jmsexample.jms;
 
 import java.util.Scanner;
 

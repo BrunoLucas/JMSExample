@@ -1,4 +1,4 @@
-package br.com.rukaso.jmsexample;
+package br.com.rukaso.jmsexample.jms;
 
 import java.util.Enumeration;
 import java.util.Scanner;
@@ -14,10 +14,11 @@ import javax.jms.Queue;
 import javax.jms.QueueBrowser;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import javax.jms.Topic;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-public class TesteComsumidorFila {
+public class TesteComsumidorTopicoEstoque {
 
 	public static void main(String[] args) throws NamingException, JMSException {
 		
@@ -25,21 +26,13 @@ public class TesteComsumidorFila {
 		
 		ConnectionFactory connectionFactory = (ConnectionFactory) context.lookup("ConnectionFactory");
 		Connection connection = connectionFactory.createConnection("user", "senha");
+		connection.setClientID("estoque");
 		connection.start();
 		
 		Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-		Destination fila = (Destination) context.lookup("financeiro");
+		Topic topico = (Topic) context.lookup("loja");
 		
-		QueueBrowser queueBrowser = session.createBrowser((Queue) fila);
-
-		Enumeration enumeration = queueBrowser.getEnumeration();
-		
-		while(enumeration.hasMoreElements()){
-			TextMessage textMessage = (TextMessage) enumeration.nextElement();
-			System.out.println("Mensagem: " + textMessage.getText());
-		}
-		
-		MessageConsumer consumer = session.createConsumer(fila);
+		MessageConsumer consumer = session.createDurableSubscriber(topico, "assinatura");
 		consumer.setMessageListener(new MessageListener() {
 			
 			@Override
