@@ -17,7 +17,7 @@ public class QueueReceiverTest {
      
 		InitialContext ctx = new InitialContext();
         QueueConnectionFactory cf = (QueueConnectionFactory)ctx.lookup("ConnectionFactory");
-        QueueConnection conexao = cf.createQueueConnection();
+        QueueConnection conexao = cf.createQueueConnection("user", "senha");
         conexao.start();
 
         QueueSession sessao = conexao.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);

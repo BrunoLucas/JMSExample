@@ -22,7 +22,7 @@ public class TestProducerQueue {
 		InitialContext context = new InitialContext();
 
 		ConnectionFactory connectionFactory = (ConnectionFactory) context.lookup("ConnectionFactory");
-		Connection connection = connectionFactory.createConnection();
+		Connection connection = connectionFactory.createConnection("user", "senha");
 		connection.start();
 
 		Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
