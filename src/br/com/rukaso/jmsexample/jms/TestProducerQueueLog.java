@@ -43,7 +43,7 @@ public class TestProducerQueueLog {
 			producer.send(mensagemLogInfo, DeliveryMode.NON_PERSISTENT, 0, 5000);
 			producer.send(mensagemLogDebug, DeliveryMode.NON_PERSISTENT, 2, 5000);
 			producer.send(mensagemLogWarn, DeliveryMode.NON_PERSISTENT, 4, 5000);
-			producer.send(mensagemLogError, DeliveryMode.NON_PERSISTENT, 6, 5000);
+			producer.send(mensagemLogError, DeliveryMode.NON_PERSISTENT,6, 5000);
 
 		}
 		
