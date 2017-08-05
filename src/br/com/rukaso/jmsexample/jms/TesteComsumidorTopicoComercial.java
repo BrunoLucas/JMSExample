@@ -19,6 +19,7 @@ import br.com.rukaso.jmsexample.modelo.Pedido;
 public class TesteComsumidorTopicoComercial {
 
 	public static void main(String[] args) throws NamingException, JMSException {
+	    System.setProperty("org.apache.activemq.SERIALIZABLE_PACKAGES","java.lang,sun.util,java.math,java.util,br.com.rukaso.jmsexample.modelo");
 		
 		InitialContext context = new InitialContext();
 		
